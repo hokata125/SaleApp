@@ -35,6 +35,7 @@
     </div>
 </nav>
 <section class="container">
+    {% if products %}
     <div class="row">
         {% for p in products %}
         <div class="col-md-3 col-6 p-2">
@@ -50,12 +51,15 @@
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="alert alert-danger mt-4">KHÔNG TÌM THẤY SẢN PHẨM NÀO!</div>
+    {% endif %}
 </section>
 </body>
 <footer>
     <div class="mt-4 p-5 bg-primary text-white rounded">
-  <h1>HỆ THỐNG ĐIỆN THOẠI BÁN LẺ CELLPHONE S</h1>
-  <p>&copy;Copyright 2025 - ALL RIGHTS RESERVED</p>
-</div>
+        <h1>HỆ THỐNG ĐIỆN THOẠI BÁN LẺ CELLPHONE S</h1>
+        <p>&copy;Copyright 2025 - ALL RIGHTS RESERVED</p>
+    </div>
 </footer>
 </html>
