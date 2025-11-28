@@ -1,6 +1,6 @@
 {% extends 'layout/base.html' %}
 
-{% block title %} CELLPHONES WEBSITE {% endblock %}
+{% block title %} CELLPHONE S WEBSITE {% endblock %}
 
 {% block content %}
 {% if products %}
@@ -19,6 +19,13 @@
     </div>
     {% endfor %}
 </div>
+{% if pages > 1 %}
+<ul class="pagination mt-2 justify-content-center">
+    {% for i in range (1, pages + 1) %}
+    <li class="page-item"><a class="page-link" href="/?page={{i}}">{{ i }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% else %}
 <div class="alert alert-danger mt-4">KHÔNG TÌM THẤY SẢN PHẨM NÀO!</div>
 {% endif %}
