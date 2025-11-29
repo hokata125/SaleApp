@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect
-from flask_login import login_user, logout_user, current_user
+from flask import Flask, render_template, request, redirect, jsonify, session
+from flask_login import login_user, logout_user
 from werkzeug.utils import redirect
-from eapp import app, dao, login
+from eapp import app, dao, login, utils
 from eapp.dao import auth_user
 import math
 
@@ -35,6 +35,24 @@ def login_process():
     next = request.args.get('next')
     return redirect(next if next else'/admin')
 
+@app.route('/register', methods=['post'])
+def register_process():
+    password = request.form.get('password')
+    confirmpass = request.form.get('confirmpass')
+    if password != confirmpass:
+        error_msg = 'Mật khẩu không khớp. Vui lòng kiểm tra lại!'
+        return render_template('register.html', error_msg=error_msg)
+
+    name = request.form.get('name')
+    username = request.form.get('username')
+    avatar = request.files.get('avatar')
+
+    try:
+        u = dao.add_user(name=name, username=username, password=password, avatar=avatar)
+        return redirect('/login')
+    except Exception as ex:
+        return render_template('register.html', error_msg=str(ex))
+
 @app.route('/logout')
 def logout_process():
     logout_user()
@@ -51,6 +69,42 @@ def common_response():
     return {
         'categories': dao.load_categories()
     }
+
+@app.route('/api/carts', methods=['post'])
+def add_to_cart():
+    '''
+        {
+            "1", {
+                "id": "1",
+                "name": "aaaa",
+                "price": 123,
+                "quantity": 2
+                },
+            "2", {
+                "id: "2",
+                "name": "bbb",
+                "price": 2234,
+                "quantity": 1
+                }
+        }
+    '''
+    cart = session.get('cart')
+    if not cart:
+        cart = {}
+    id = str(request.json.get("id"))
+    if id in cart:
+        cart[id]['quantity'] += 1
+    else:
+        name = request.json.get("name")
+        price = request.json.get("price")
+        cart[id] = {
+            "id": id,
+            "name": name,
+            "price": price,
+            "quantity": 1
+        }
+    session['cart'] = cart
+    return jsonify({utils.stats_cart(cart)})
 
 if __name__ == '__main__':
     from eapp import admin
